@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/api" />
+            <option value="$PROJECT_DIR$/api/versions/1.20.1" />
+            <option value="$PROJECT_DIR$/common" />
+            <option value="$PROJECT_DIR$/common/versions/1.20.1" />
+            <option value="$PROJECT_DIR$/fabric" />
+            <option value="$PROJECT_DIR$/fabric/versions/1.20.1" />
+            <option value="$PROJECT_DIR$/forge" />
+            <option value="$PROJECT_DIR$/forge/versions/1.20.1" />
+            <option value="$PROJECT_DIR$/neoforge" />
+            <option value="$PROJECT_DIR$/neoforge/versions/1.20.6" />
+            <option value="$PROJECT_DIR$/neoforge/versions/1.21.1" />
+            <option value="$PROJECT_DIR$/neoforge/versions/1.21.2" />
+            <option value="$PROJECT_DIR$/neoforge/versions/1.21.4" />
+            <option value="$PROJECT_DIR$/versions/1.20.1" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
