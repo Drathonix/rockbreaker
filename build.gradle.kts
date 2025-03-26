@@ -163,12 +163,32 @@ val env = Env()
 
 enum class DepType {
     API,
+    // Optional API
+    API_OPTIONAL{
+        override fun isOptional(): Boolean {
+            return true;
+        }
+    },
     // Implementation
     IMPL,
     // Forge Runtime Library
-    FRL,
+    FRL{
+        override fun includeInDepsList(): Boolean {
+            return false;
+        }
+    },
     // Implementation and Included in output jar.
-    INCLUDE
+    INCLUDE{
+        override fun includeInDepsList(): Boolean {
+            return false;
+        }
+    };
+    open fun isOptional() : Boolean {
+        return false;
+    }
+    open fun includeInDepsList() : Boolean{
+        return true;
+    }
 }
 
 /**
@@ -306,6 +326,11 @@ class ModDependencies {
 
     fun forEachOptional(cons: BiConsumer<String,VersionRange>){
         fre(loadAfterOptional,cons)
+        apis.forEach{src->
+            if(src.enabled && src.type.isOptional() && src.type.includeInDepsList()) src.versionRange.ifPresent { ver -> src.modid?.let {
+                cons.accept(it, ver)
+            }}
+        }
     }
 
     fun forEachRequired(cons: BiConsumer<String,VersionRange>){
@@ -321,7 +346,7 @@ class ModDependencies {
             cons.accept("fabric", env.fabricLoaderVersion)
         }
         apis.forEach{src->
-            if(src.enabled) src.versionRange.ifPresent { ver -> src.modid?.let {
+            if(src.enabled && !src.type.isOptional() && src.type.includeInDepsList()) src.versionRange.ifPresent { ver -> src.modid?.let {
                 cons.accept(it, ver)
             }}
         }
@@ -477,7 +502,7 @@ dependencies {
     apis.forEach { src->
         if(src.enabled) {
             src.versionRange.ifPresent { ver ->
-                if(src.type == DepType.API) {
+                if(src.type == DepType.API || src.type == DepType.API_OPTIONAL) {
                     modApi("${src.mavenLocation}:${ver.min}")
                 }
                 if(src.type == DepType.IMPL) {
