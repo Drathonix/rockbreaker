@@ -183,7 +183,6 @@ class APISource(val type: DepType, val mavenLocation: String, val versionRange: 
 
 /**
  * APIs with hardcoded support for convenience. These are optional.
- * If adding apis use CTRL F + "(+++add_dep_marker)" to find relevant code points where edits are required.
  */
 //TODO add any hardcoded apis here. Hardcoded APIs should be used in most if not all your versions.
 val apis = arrayListOf(
