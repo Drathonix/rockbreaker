@@ -1,10 +1,8 @@
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
-import org.jetbrains.kotlin.gradle.utils.API
 import java.util.Optional
 import java.util.function.BiConsumer
 import java.util.function.Consumer
 import java.util.function.Predicate
-import java.util.function.Supplier
 
 // Baseline code. Minimal edits necessary.
 // TODO acknowledge that you add plugins here.
@@ -542,6 +540,35 @@ java {
     val java = if(env.javaVer == 8) JavaVersion.VERSION_1_8 else if(env.javaVer == 17) JavaVersion.VERSION_17 else JavaVersion.VERSION_21
     targetCompatibility = java
     sourceCompatibility = java
+}
+
+/**
+ * Replaces the normal copy task and post-processes the files.
+ * Effectively renames datapack directories due to depluralization past 1.20.4.
+ * TODO: acknowledge that you should not pluralize the directories listed in targets.
+ */
+abstract class ProcessResourcesExtension : ProcessResources() {
+    @get:Input
+    val autoPluralize = arrayListOf(
+        "/data/minecraft/tags/block",
+        "/data/minecraft/tags/item",
+        "/data/rockbreaker/loot_table",
+        "/data/rockbreaker/recipe",
+        "/data/rockbreaker/tags/item",
+    )
+    override fun copy() {
+        super.copy()
+        autoPluralize.forEach { path ->
+            val file = File(destinationDir.absolutePath.plus(path))
+            if(file.exists()){
+                file.copyRecursively(File(file.absolutePath.plus("s")),true)
+                file.deleteRecursively()
+            }
+        }
+    }
+}
+if(env.atMost("1.20.6")){
+    tasks.replace("processResources",ProcessResourcesExtension::class)
 }
 
 tasks.processResources {
