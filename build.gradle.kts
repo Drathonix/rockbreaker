@@ -2,6 +2,8 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 import java.util.Optional
 import java.util.function.BiConsumer
 import java.util.function.Consumer
+import java.util.function.Predicate
+import java.util.function.Supplier
 
 // Baseline code. Minimal edits necessary.
 // TODO acknowledge that you add plugins here.
@@ -159,15 +161,30 @@ class Env {
 val env = Env()
 
 /**
+ * APIs must have a maven source.
+ * If the version range is not present then the API will not be used.
+ * If modid is null then the API will not be declared as a dependency in uploads.
+ * The enable condition determines whether the API will be used for this version.
+ */
+class APISource(val mavenLocation: String, val versionRange: Optional<VersionRange>, var modid: String?, private val enableCondition: Predicate<APISource>) {
+    val enabled = this.enableCondition.test(this)
+}
+
+/**
  * APIs with hardcoded support for convenience. These are optional.
  * If adding apis use CTRL F + "(+++add_dep_marker)" to find relevant code points where edits are required.
  */
 //TODO add any hardcoded apis here. Hardcoded APIs should be used in most if not all your versions.
-class APIs {
-    val fabricApi = optionalVersionProperty("deps.api.fabric")
-    val architecturyApi = optionalVersionProperty("deps.api.architectury")
-}
-val apis = APIs()
+val apis = arrayListOf(
+    APISource("net.fabricmc.fabric-api:fabric-api",optionalVersionProperty("deps.api.fabric"),if(env.atMost("1.16.5")) "fabric" else "fabric-api") { src ->
+        src.versionRange.isPresent && env.isFabric
+    },
+    APISource("${if(env.atLeast("1.18.0")) "dev.architectury" else "me.shedaniel"}:architectury-${env.loader}",
+        optionalVersionProperty("deps.api.architectury"),"architectury")
+    { src ->
+        src.versionRange.isPresent
+    }
+)
 
 // Stores information about the mod itself.
 class ModProperties {
@@ -293,12 +310,10 @@ class ModDependencies {
         if(env.isFabric) {
             cons.accept("fabric", env.fabricLoaderVersion)
         }
-        // (+++add_dep_marker) TODO Add hard coded dependencies here.
-        apis.fabricApi.ifPresent{ver->
-            cons.accept(if(env.atMost("1.16.5")) "fabric" else "fabric-api", ver)
-        }
-        apis.architecturyApi.ifPresent{ver->
-            cons.accept("architectury", ver)
+        apis.forEach{src->
+            if(src.enabled) src.versionRange.ifPresent { ver -> src.modid?.let {
+                cons.accept(it, ver)
+            }}
         }
     }
 }
@@ -310,7 +325,6 @@ val dependencies = ModDependencies()
 class SpecialMultiversionedConstants {
     val mixinField = if(env.atMost("1.20.4") && env.isNeo) neoForgeMixinField() else if(env.isFabric) fabricMixinField() else ""
 
-    val architecturyGroup = if(env.atLeast("1.18.0")) "dev.architectury" else "me.shedaniel"
     val forgelikeLoaderVer =  if(env.isForge) env.forgeVersion.asForgelike() else env.neoforgeLoaderVersion.asForgelike()
     val forgelikeAPIVer = if(env.isForge) env.forgeVersion.asForgelike() else env.neoforgeVersion.asForgelike()
     val dependenciesField = if(env.isFabric) fabricDependencyList() else forgelikeDependencyField()
@@ -440,29 +454,20 @@ dependencies {
     // TODO do you really want to use yarn though? Like what convenience does it even give you smh?
     mappings(loom.officialMojangMappings())
 
-    // (+++add_dep_marker) //TODO acknowledge that any apis added must be imported in this area.
-
     if(env.isFabric) {
         modImplementation("net.fabricmc:fabric-loader:${env.fabricLoaderVersion.min}")
-        apis.architecturyApi.ifPresent {ver->
-            modApi("${dynamics.architecturyGroup}:architectury-fabric:${ver.min}")
-        }
-        apis.fabricApi.ifPresent {ver->
-            modApi("net.fabricmc.fabric-api:fabric-api:${ver.min}")
-        }
     }
     if(env.isForge){
         "forge"("net.minecraftforge:forge:${env.forgeMavenVersion.min}")
-        apis.architecturyApi.ifPresent {ver->
-            modApi("${dynamics.architecturyGroup}:architectury-forge:${ver.min}")
-        }
     }
     if(env.isNeo){
         "neoForge"("net.neoforged:neoforge:${env.neoforgeVersion.min}")
-        apis.architecturyApi.ifPresent { ver->
-            modApi("${dynamics.architecturyGroup}:architectury-neoforge:${ver.min}")
-        }
     }
+
+    apis.forEach { src->
+        if(src.enabled) src.versionRange.ifPresent { ver-> modApi("${src.mavenLocation}:${ver.min}") }
+    }
+
     vineflowerDecompilerClasspath("org.vineflower:vineflower:1.10.1")
 }
 
