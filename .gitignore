@@ -34,9 +34,17 @@ bin/
 /dist/
 /nbdist/
 /.nb-gradle/
+*/run
 
 ### VS Code ###
 .vscode/
 
 ### Mac OS ###
 .DS_Store
+.idea/runConfigurations/
+
+/run
+/run/saves
+/run/**
+*/run
+/run/saves

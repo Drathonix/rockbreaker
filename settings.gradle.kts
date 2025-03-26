@@ -25,41 +25,37 @@ extensions.configure<StonecutterSettings> {
     kotlinController = true
     centralScript = "build.gradle.kts"
 
+    // TODO Disable any versions you don't want to support anb enable any versions you want to support
+    // The versions listed here, commented out or otherwise, all have pre-made gradle.properties.
     shared {
-        versions("1.20.1")
-        branch("common") {
-            versions("1.20.1")
-        }
-        branch("fabric") {
-            versions("1.20.1")
-        }
-        branch("forge") {
-            versions("1.20.1")
-        }
-        branch("neoforge"){
-            versions(
-                "1.20.6",
-                "1.21.1",
-                "1.21.2",
-                "1.21.4"
-            )
-        }
-        // The API should change minimally, add any relevant versions here to update.
-        branch("api"){
-            versions("1.20.1")
-        }
-        vcsVersion="1.20.1"
+        vers("1.16.5-fabric","1.16.5")
+        vers("1.16.5-forge","1.16.5")
+        vers("1.18.2-fabric","1.18.2")
+        vers("1.18.2-forge","1.18.2")
+        vers("1.19.2-fabric","1.19.2")
+        vers("1.19.2-forge","1.19.2")
+        vers("1.19.4-fabric","1.19.4")
+        vers("1.19.4-forge","1.19.4")
+        vers("1.20.1-fabric","1.20.1")
+        vers("1.20.1-forge","1.20.1")
+        vers("1.20.4-fabric","1.20.4")
+        vers("1.20.4-forge","1.20.4")
+        vers("1.20.4-neoforge","1.20.4")
+        vers("1.20.6-fabric","1.20.6")
+        vers("1.20.6-neoforge","1.20.6")
+        vers("1.21-fabric","1.21")
+        vers("1.21-neoforge","1.21")
+        vers("1.21.1-fabric","1.21.1")
+        vers("1.21.1-neoforge","1.21.1")
+        vers("1.21.2+3-fabric","1.21.2")
+        vers("1.21.2+3-neoforge","1.21.2")
+        vcsVersion="1.21.2+3-fabric"
     }
     create(rootProject)
 }
 
-// *** Replace this with your project name
+// TODO Replace this with your project name (Likely already done.)
 rootProject.name = "rockbreaker"
-include("neoforge")
-include("forge")
-include("fabric")
-include("common")
-include("api")
 
 
 
