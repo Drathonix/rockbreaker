@@ -1,4 +1,5 @@
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
+import org.jetbrains.kotlin.gradle.utils.API
 import java.util.Optional
 import java.util.function.BiConsumer
 import java.util.function.Consumer
@@ -160,13 +161,23 @@ class Env {
 }
 val env = Env()
 
+enum class DepType {
+    API,
+    // Implementation
+    IMPL,
+    // Forge Runtime Library
+    FRL,
+    // Implementation and Included in output jar.
+    INCLUDE
+}
+
 /**
  * APIs must have a maven source.
  * If the version range is not present then the API will not be used.
  * If modid is null then the API will not be declared as a dependency in uploads.
  * The enable condition determines whether the API will be used for this version.
  */
-class APISource(val mavenLocation: String, val versionRange: Optional<VersionRange>, var modid: String?, private val enableCondition: Predicate<APISource>) {
+class APISource(val type: DepType, val mavenLocation: String, val versionRange: Optional<VersionRange>, val modid: String?, private val enableCondition: Predicate<APISource>) {
     val enabled = this.enableCondition.test(this)
 }
 
@@ -176,10 +187,10 @@ class APISource(val mavenLocation: String, val versionRange: Optional<VersionRan
  */
 //TODO add any hardcoded apis here. Hardcoded APIs should be used in most if not all your versions.
 val apis = arrayListOf(
-    APISource("net.fabricmc.fabric-api:fabric-api",optionalVersionProperty("deps.api.fabric"),if(env.atMost("1.16.5")) "fabric" else "fabric-api") { src ->
+    APISource(DepType.API,"net.fabricmc.fabric-api:fabric-api",optionalVersionProperty("deps.api.fabric"),if(env.atMost("1.16.5")) "fabric" else "fabric-api") { src ->
         src.versionRange.isPresent && env.isFabric
     },
-    APISource("${if(env.atLeast("1.18.0")) "dev.architectury" else "me.shedaniel"}:architectury-${env.loader}",
+    APISource(DepType.API,"${if(env.atLeast("1.18.0")) "dev.architectury" else "me.shedaniel"}:architectury-${env.loader}",
         optionalVersionProperty("deps.api.architectury"),"architectury")
     { src ->
         src.versionRange.isPresent
@@ -465,7 +476,23 @@ dependencies {
     }
 
     apis.forEach { src->
-        if(src.enabled) src.versionRange.ifPresent { ver-> modApi("${src.mavenLocation}:${ver.min}") }
+        if(src.enabled) {
+            src.versionRange.ifPresent { ver ->
+                if(src.type == DepType.API) {
+                    modApi("${src.mavenLocation}:${ver.min}")
+                }
+                if(src.type == DepType.IMPL) {
+                    modImplementation("${src.mavenLocation}:${ver.min}")
+                }
+                if(src.type == DepType.FRL && env.isForge){
+                    "forgeRuntimeLibrary"("${src.mavenLocation}:${ver.min}")
+                }
+                if(src.type == DepType.INCLUDE) {
+                    modImplementation("${src.mavenLocation}:${ver.min}")
+                    include("${src.mavenLocation}:${ver.min}")
+                }
+            }
+        }
     }
 
     vineflowerDecompilerClasspath("org.vineflower:vineflower:1.10.1")
