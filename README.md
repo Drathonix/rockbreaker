@@ -29,10 +29,11 @@ Do not sync gradle until told to. You will just waste time if you do.
 1. Copy all the files in this Repository into your project directory. Allow overwrites!
 2. In settings.gradle.kts disable any versions you don't want active to start. (I have all except 1.20.4 turned off for convenience) Enabling more versions will make script loading take longer.
 3. CTRL + SHIFT + R. Replace all instances of "rockbreaker" with your planned modid. Replace all instances of "Rock Breaker" with your mod display name. 3
-4. CTRL + SHIFT + F. Search "TODO" Go through all the TODOs in gradle.properties, build.gradle.kts, stonecutter.gradle.kts, LICENSE, and settings.gradle.kts.
-5. Sync gradle! Wait. This may take longer depending on how many versions you have enabled.
-6. In the gradle menu, expand Tasks > stonecutter. Use the "Set active project to VERSION-MODLOADER" to swap between modloaders ONLY for now.
+4. Rename the Mixin files from mixins.<loader>.rockbreaker.json to mixins.<loader>.<your modid>.json. Rename the source root from your.group.rockbreaker to <your group>.<your modid>
+6. CTRL + SHIFT + F. Search "TODO" Go through all the TODOs in gradle.properties, build.gradle.kts, stonecutter.gradle.kts, LICENSE, and settings.gradle.kts.
+6. Sync gradle! Wait. This may take longer depending on how many versions you have enabled.
+7. In the gradle menu, expand Tasks > stonecutter. Use the "Set active project to VERSION-MODLOADER" to swap between modloaders ONLY for now.
    1. CTRL + SHIFT + F "TODO", modify relevant modloader specific code for the current loader.
-7. Once all the code is rid of Rock Breaker defaults set your active project to your preferred development version.
+8. Once all the code is rid of Rock Breaker defaults set your active project to your preferred development version.
 
 Finally, replace this README.md with your own and begin developing!
