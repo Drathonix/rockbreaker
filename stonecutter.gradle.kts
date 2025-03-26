@@ -11,7 +11,7 @@ stonecutter active "1.20.4-neoforge" /* You may have to edit this. Make sure it 
 // Builds every version into `build/libs/{mod.version}/`
 stonecutter registerChiseled tasks.register("chiseledBuild", stonecutter.chiseled) {
     group = "project"
-    ofTask("buildAndCollect")
+    ofTask("build")
 }
 
 stonecutter registerChiseled tasks.register("chiseledClean", stonecutter.chiseled) {
