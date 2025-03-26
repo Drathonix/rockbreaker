@@ -513,8 +513,8 @@ tasks.processResources {
     }
 }
 
-//TODO: Disable unsupported destinations.
-publishMods {
+//TODO: Enable auto-publishing.
+/*publishMods {
     file = tasks.remapJar.get().archiveFile
     additionalFiles.from(tasks.remapSourcesJar.get().archiveFile)
     displayName = "${mod.displayName} ${mod.version} for ${env.mcVersion.min}"
@@ -579,4 +579,4 @@ publishing {
             from(components["java"])
         }
     }
-}
+}*/
