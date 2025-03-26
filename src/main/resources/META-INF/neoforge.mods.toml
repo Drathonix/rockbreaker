@@ -3,7 +3,7 @@
 # The coremods config file path is not configurable and is always loaded from META-INF/coremods.json
 
 modLoader="javafml"
-loaderVersion="${loader_ver_range}"
+loaderVersion="${forgelike_loader_ver}"
 license="${license}"
 issueTrackerURL="${issue_tracker}"
 

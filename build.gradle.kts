@@ -68,13 +68,22 @@ fun optionalStrProperty(key: String) : Optional<String> {
     return Optional.of(str)
 }
 
-class VersionRange(public val min: String, public val max: String){
+class VersionRange(val min: String, val max: String){
     fun asForgelike() : String{
         return "${if(min.isEmpty()) "(" else "["}${min},${max}${if(max.isEmpty()) ")" else "]"}"
     }
     fun asFabric() : String{
-        //TODO
-        return "notDone"
+        var out = ""
+        if(min.isNotEmpty()){
+            out += ">=$min"
+        }
+        if(max.isNotEmpty()){
+            if(out.isNotEmpty()){
+                out += " "
+            }
+            out += "<=$max"
+        }
+        return out;
     }
 }
 
@@ -394,7 +403,7 @@ class SpecialMultiversionedConstants {
             return ""
         }
         else{
-            var out = "mixins:[\n"
+            var out = "\"mixins\":[\n"
             for ((index, mixin) in list.withIndex()) {
                 out += "\"${mixin}\""
                 if(index < list.size-1){
@@ -406,14 +415,14 @@ class SpecialMultiversionedConstants {
         }
     }
     private fun fabricDependencyList() : String{
-        var out = "depends:{"
+        var out = "\"depends\":{"
         var useComma = false
         dependencies.forEachRequired{modid,ver->
             if(useComma){
                 out+=","
             }
             out+="\n"
-            out+="\"{$modid}\": \"${ver.asFabric()}\""
+            out+="\"${modid}\": \"${ver.asFabric()}\""
             useComma = true
         }
         return "$out},\n"
