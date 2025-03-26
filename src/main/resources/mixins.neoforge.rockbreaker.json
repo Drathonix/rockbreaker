@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "your.group.rockbreaker.neoforge.mixin",
+  "compatibilityLevel": "JAVA_${java_ver}",
+  "mixins": [
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

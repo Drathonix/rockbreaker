@@ -408,29 +408,29 @@ class SpecialMultiversionedConstants {
             return ""
         }
         else{
-            var out = "\t\"mixins\" : [\n"
+            var out = "  \"mixins\" : [\n"
             for ((index, mixin) in list.withIndex()) {
-                out += "\t\t\"${mixin}\""
+                out += "    \"${mixin}\""
                 if(index < list.size-1){
                     out+=","
                 }
                 out+="\n"
             }
-            return "\t$out],\n"
+            return "$out  ],"
         }
     }
     private fun fabricDependencyList() : String{
-        var out = "\t\"depends\":{"
+        var out = "  \"depends\":{"
         var useComma = false
         dependencies.forEachRequired{modid,ver->
             if(useComma){
                 out+=","
             }
             out+="\n"
-            out+="\t\t\"${modid}\": \"${ver.asFabric()}\""
+            out+="    \"${modid}\": \"${ver.asFabric()}\""
             useComma = true
         }
-        return "$out\n\t}\n"
+        return "$out\n  }"
 
     }
     private fun forgelikeDependencyField() : String {
