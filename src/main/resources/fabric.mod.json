@@ -23,6 +23,6 @@
       "${fabric_client_entry}"
     ]
   },
-  ${mixin_field}
-  ${dependencies_field}
+${mixin_field}
+${dependencies_field}
 }

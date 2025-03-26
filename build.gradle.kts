@@ -46,15 +46,15 @@ fun boolProperty(key: String) : Boolean {
     return bool(property(key).toString())
 }
 
-fun listProperty(key: String) : List<String> {
+fun listProperty(key: String) : ArrayList<String> {
     if(!hasProperty(key)){
-        return emptyList()
+        return arrayListOf()
     }
     val str = property(key).toString();
     if(str == "UNSET"){
-        return emptyList()
+        return arrayListOf()
     }
-    return str.split(" ");
+    return ArrayList(str.split(" "));
 }
 
 fun optionalStrProperty(key: String) : Optional<String> {
@@ -95,6 +95,11 @@ fun versionProperty(key: String) : VersionRange {
         return VersionRange("","")
     }
     val list = listProperty(key)
+    for (i in 0 until list.size) {
+        if(list.get(i) == "UNSET"){
+            list.set(i,"")
+        }
+    }
     if(list.isEmpty()){
         return VersionRange("","")
     }
@@ -230,12 +235,12 @@ class ModProperties {
     val id = property("mod.id").toString()
     val displayName = property("mod.display_name").toString()
     val version = property("version").toString()
-    val description = optionalStrProperty("mod.description").toString()
+    val description = optionalStrProperty("mod.description").orElse("")
     val authors = property("mod.authors").toString()
     val icon = property("mod.icon").toString()
-    val issueTracker = optionalStrProperty("mod.issue_tracker").toString()
-    val license = optionalStrProperty("mod.license").toString()
-    val sourceUrl = optionalStrProperty("mod.source_url").toString()
+    val issueTracker = optionalStrProperty("mod.issue_tracker").orElse("")
+    val license = optionalStrProperty("mod.license").orElse("")
+    val sourceUrl = optionalStrProperty("mod.source_url").orElse("")
     val generalWebsite = optionalStrProperty("mod.general_website").orElse(sourceUrl)
 }
 
@@ -403,29 +408,29 @@ class SpecialMultiversionedConstants {
             return ""
         }
         else{
-            var out = "\"mixins\":[\n"
+            var out = "\t\"mixins\" : [\n"
             for ((index, mixin) in list.withIndex()) {
-                out += "\"${mixin}\""
+                out += "\t\t\"${mixin}\""
                 if(index < list.size-1){
                     out+=","
                 }
                 out+="\n"
             }
-            return "$out],\n"
+            return "\t$out],\n"
         }
     }
     private fun fabricDependencyList() : String{
-        var out = "\"depends\":{"
+        var out = "\t\"depends\":{"
         var useComma = false
         dependencies.forEachRequired{modid,ver->
             if(useComma){
                 out+=","
             }
             out+="\n"
-            out+="\"${modid}\": \"${ver.asFabric()}\""
+            out+="\t\t\"${modid}\": \"${ver.asFabric()}\""
             useComma = true
         }
-        return "$out},\n"
+        return "$out\n\t}\n"
 
     }
     private fun forgelikeDependencyField() : String {
@@ -540,7 +545,7 @@ java {
 }
 
 tasks.processResources {
-    val map = mapOf(
+    val map = mapOf<String,String>(
         "id" to mod.id,
         "name" to mod.displayName,
         "display_name" to mod.displayName,
@@ -556,7 +561,7 @@ tasks.processResources {
         "mc_min" to env.mcVersion.min,
         "mc_max" to env.mcVersion.max,
         "issue_tracker" to mod.issueTracker,
-        "java_ver" to env.javaVer,
+        "java_ver" to env.javaVer.toString(),
         "forgelike_loader_ver" to dynamics.forgelikeLoaderVer,
         "forgelike_api_ver" to dynamics.forgelikeAPIVer,
         "loader_id" to env.loader,
