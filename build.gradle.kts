@@ -1,4 +1,3 @@
-import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 import java.util.Optional
 import java.util.function.BiConsumer
 import java.util.function.Consumer
@@ -34,7 +33,7 @@ repositories {
 }
 
 fun bool(str: String) : Boolean {
-    return str.toDefaultLowerCase().startsWith("t")
+    return str.lowercase().startsWith("t")
 }
 
 fun boolProperty(key: String) : Boolean {
@@ -660,13 +659,15 @@ tasks.processResources {
 publishing {
     repositories {
         // TODO this is an example of how I recommend you do this.
-        /*maven {
-            url = "https://panel.ryuutech.com/nexus/repository/maven-releases/"
-            credentials {
-                username = System.getenv("MVN_NAME")
-                password = System.getenv("MVN_KEY")
+        if(modPublish.mavenURL.isPresent) {
+            maven {
+                url = modPublish.mavenURL.get()
+                credentials {
+                    username = System.getenv("MVN_NAME")
+                    password = System.getenv("MVN_KEY")
+                }
             }
-        }*/
+        }
     }
     publications {
         create<MavenPublication>("mavenJava"){
