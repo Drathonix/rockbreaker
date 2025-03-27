@@ -47,11 +47,11 @@ fun listProperty(key: String) : ArrayList<String> {
     if(!hasProperty(key)){
         return arrayListOf()
     }
-    val str = property(key).toString();
+    val str = property(key).toString()
     if(str == "UNSET"){
         return arrayListOf()
     }
-    return ArrayList(str.split(" "));
+    return ArrayList(str.split(" "))
 }
 
 fun optionalStrProperty(key: String) : Optional<String> {
@@ -80,7 +80,7 @@ class VersionRange(val min: String, val max: String){
             }
             out += "<=$max"
         }
-        return out;
+        return out
     }
 }
 
@@ -93,18 +93,18 @@ fun versionProperty(key: String) : VersionRange {
     }
     val list = listProperty(key)
     for (i in 0 until list.size) {
-        if(list.get(i) == "UNSET"){
-            list.set(i,"")
+        if(list[i] == "UNSET"){
+            list[i] = ""
         }
     }
-    if(list.isEmpty()){
-        return VersionRange("","")
+    return if(list.isEmpty()){
+        VersionRange("","")
     }
     else if(list.size == 1) {
-        return VersionRange(list.get(0),"")
+        VersionRange(list[0],"")
     }
     else{
-        return VersionRange(list.get(0),list.get(1))
+        VersionRange(list[0], list[1])
     }
 }
 
@@ -134,7 +134,7 @@ enum class EnvType {
 class Env {
     val archivesBaseName = property("archives_base_name").toString()
 
-    val mcVersion = versionProperty("deps.core.mc.version_range");
+    val mcVersion = versionProperty("deps.core.mc.version_range")
 
     val loader = property("loom.platform").toString()
     val isFabric = loader == "fabric"
@@ -159,7 +159,7 @@ class Env {
     fun isNot(version: String) = stonecutter.compare(mcVersion.min, version) != 0
     fun isExact(version: String) = stonecutter.compare(mcVersion.min, version) == 0
 
-    fun extractForgeVer(str: String) : String {
+    private fun extractForgeVer(str: String) : String {
         val split = str.split("-")
         if(split.size == 1){
             return split[0]
@@ -177,7 +177,7 @@ enum class DepType {
     // Optional API
     API_OPTIONAL{
         override fun isOptional(): Boolean {
-            return true;
+            return true
         }
     },
     // Implementation
@@ -185,21 +185,27 @@ enum class DepType {
     // Forge Runtime Library
     FRL{
         override fun includeInDepsList(): Boolean {
-            return false;
+            return false
         }
     },
     // Implementation and Included in output jar.
     INCLUDE{
         override fun includeInDepsList(): Boolean {
-            return false;
+            return false
         }
     };
     open fun isOptional() : Boolean {
-        return false;
+        return false
     }
     open fun includeInDepsList() : Boolean{
-        return true;
+        return true
     }
+}
+
+class APIModInfo(val modid: String?, val curseSlug: String?, val rinthSlug: String?){
+    constructor () : this(null,null,null)
+    constructor (modid: String) : this(modid,modid,modid)
+    constructor (modid: String, slug: String) : this(modid,slug,slug)
 }
 
 /**
@@ -208,7 +214,7 @@ enum class DepType {
  * If modid is null then the API will not be declared as a dependency in uploads.
  * The enable condition determines whether the API will be used for this version.
  */
-class APISource(val type: DepType, val mavenLocation: String, val versionRange: Optional<VersionRange>, val modid: String?, private val enableCondition: Predicate<APISource>) {
+class APISource(val type: DepType, val modInfo: APIModInfo, val mavenLocation: String, val versionRange: Optional<VersionRange>, private val enableCondition: Predicate<APISource>) {
     val enabled = this.enableCondition.test(this)
 }
 
@@ -217,11 +223,11 @@ class APISource(val type: DepType, val mavenLocation: String, val versionRange: 
  */
 //TODO add any hardcoded apis here. Hardcoded APIs should be used in most if not all your versions.
 val apis = arrayListOf(
-    APISource(DepType.API,"net.fabricmc.fabric-api:fabric-api",optionalVersionProperty("deps.api.fabric"),if(env.atMost("1.16.5")) "fabric" else "fabric-api") { src ->
+    APISource(DepType.API, APIModInfo(if(env.atMost("1.16.5")) "fabric" else "fabric-api","fabric-api"), "net.fabricmc.fabric-api:fabric-api",optionalVersionProperty("deps.api.fabric")) { src ->
         src.versionRange.isPresent && env.isFabric
     },
-    APISource(DepType.API,"${if(env.atLeast("1.18.0")) "dev.architectury" else "me.shedaniel"}:architectury-${env.loader}",
-        optionalVersionProperty("deps.api.architectury"),"architectury")
+    APISource(DepType.API,APIModInfo("architectury","architectury-api"),"${if(env.atLeast("1.18.0")) "dev.architectury" else "me.shedaniel"}:architectury-${env.loader}",
+        optionalVersionProperty("deps.api.architectury"))
     { src ->
         src.versionRange.isPresent
     }
@@ -255,10 +261,10 @@ class ModFabric {
  * All environments are provided the vanilla mixin if it is enabled.
  */
 class ModMixins {
-    val enableVanillaMixin = boolProperty("mixins.vanilla.enable");
-    val enableFabricMixin = boolProperty("mixins.fabric.enable");
-    val enableForgeMixin = boolProperty("mixins.forge.enable");
-    val enableNeoforgeMixin = boolProperty("mixins.neoforge.enable");
+    val enableVanillaMixin = boolProperty("mixins.vanilla.enable")
+    val enableFabricMixin = boolProperty("mixins.fabric.enable")
+    val enableForgeMixin = boolProperty("mixins.forge.enable")
+    val enableNeoforgeMixin = boolProperty("mixins.neoforge.enable")
 
     val vanillaMixin = "mixins.${mod.id}.json"
     val fabricMixin = "mixins.fabric.${mod.id}.json"
@@ -270,12 +276,12 @@ class ModMixins {
      * Modify this method if you need better control over the mixin list.
      */
     fun getMixins(env: EnvType) : List<String> {
-        val out = arrayListOf<String>();
-        if(enableVanillaMixin) out.add(vanillaMixin);
+        val out = arrayListOf<String>()
+        if(enableVanillaMixin) out.add(vanillaMixin)
         when (env) {
-            EnvType.FABRIC -> if(enableFabricMixin) out.add(fabricMixin);
-            EnvType.FORGE -> if(enableForgeMixin) out.add(forgeMixin);
-            EnvType.NEOFORGE -> if(enableNeoforgeMixin) out.add(neoForgeMixin);
+            EnvType.FABRIC -> if(enableFabricMixin) out.add(fabricMixin)
+            EnvType.FORGE -> if(enableForgeMixin) out.add(forgeMixin)
+            EnvType.NEOFORGE -> if(enableNeoforgeMixin) out.add(neoForgeMixin)
         }
         return out
     }
@@ -292,19 +298,19 @@ class ModMixins {
  * The curseforge API token should be stored in the CURSEFORGE_TOKEN environment variable.
  */
 class ModPublish {
-    val mcTargets = arrayListOf<String>();
-    val modrinthProjectToken = property("publish.token.modrinth").toString();
-    val curseforgeProjectToken = property("publish.token.curseforge").toString();
-    val mavenURL = property("publish.maven.url").toString();
+    val mcTargets = arrayListOf<String>()
+    val modrinthProjectToken = property("publish.token.modrinth").toString()
+    val curseforgeProjectToken = property("publish.token.curseforge").toString()
+    val mavenURL = optionalStrProperty("publish.maven.url")
     val dryRunMode = boolProperty("publish.dry_run")
 
     init {
         val tempmcTargets = listProperty("publish_acceptable_mc_versions")
         if(tempmcTargets.isEmpty()){
-            mcTargets.add(env.mcVersion.min);
+            mcTargets.add(env.mcVersion.min)
         }
         else{
-            mcTargets.addAll(tempmcTargets);
+            mcTargets.addAll(tempmcTargets)
         }
     }
 }
@@ -320,9 +326,9 @@ class ModDependencies {
 
     private fun fre(list: List<String>, versionAcceptor: BiConsumer<String,VersionRange> ) {
         for (i in 0 until list.size-3 step 3) {
-            val modid = list.get(i)
-            val min = list.get(i+1)
-            val max = list.get(i+2)
+            val modid = list[i]
+            val min = list[i+1]
+            val max = list[i+2]
             versionAcceptor.accept(modid,VersionRange(min,max))
         }
     }
@@ -338,7 +344,7 @@ class ModDependencies {
     fun forEachOptional(cons: BiConsumer<String,VersionRange>){
         fre(loadAfterOptional,cons)
         apis.forEach{src->
-            if(src.enabled && src.type.isOptional() && src.type.includeInDepsList()) src.versionRange.ifPresent { ver -> src.modid?.let {
+            if(src.enabled && src.type.isOptional() && src.type.includeInDepsList()) src.versionRange.ifPresent { ver -> src.modInfo.modid?.let {
                 cons.accept(it, ver)
             }}
         }
@@ -357,7 +363,7 @@ class ModDependencies {
             cons.accept("fabric", env.fabricLoaderVersion)
         }
         apis.forEach{src->
-            if(src.enabled && !src.type.isOptional() && src.type.includeInDepsList()) src.versionRange.ifPresent { ver -> src.modid?.let {
+            if(src.enabled && !src.type.isOptional() && src.type.includeInDepsList()) src.versionRange.ifPresent { ver -> src.modInfo.modid?.let {
                 cons.accept(it, ver)
             }}
         }
@@ -377,7 +383,7 @@ class SpecialMultiversionedConstants {
     val dependenciesField = if(env.isFabric) fabricDependencyList() else forgelikeDependencyField()
     val excludes = excludes0()
     private fun excludes0() : List<String> {
-        var out = arrayListOf<String>()
+        val out = arrayListOf<String>()
         if(!env.isForge) {
             // NeoForge before 1.21 still uses the forge mods.toml :/ One of those goofy changes between versions.
             if(!env.isNeo || !env.atLeast("1.20.6")) {
@@ -459,7 +465,7 @@ val dynamics = SpecialMultiversionedConstants()
 
 //TODO: change this if you want your upload version format to be different (this is a highly recommended format)
 version = "${mod.version}+${env.mcVersion.min}+${env.loader}"
-group = property("group").toString();
+group = property("group").toString()
 
 // Adds both optional and required dependencies to stonecutter version checking.
 dependencies.forEachAfter{mid, ver ->
@@ -626,31 +632,53 @@ tasks.processResources {
         // Get one here: https://modrinth.com/settings/pats, enable read, write, and create Versions ONLY!
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         minecraftVersions.addAll(modPublish.mcTargets)
-        requires {
-            if(!apis.architecturyApi.isEmpty) {
-                slug = "architectury-api"
-            }
-        }
-        if(env.isFabric){
-            requires{
-                slug="fabric-api"
+        apis.forEach{ src ->
+            if(src.enabled) src.versionRange.ifPresent{ ver ->
+                if(src.type.isOptional()){
+                    src.modInfo.rinthSlug?.let {
+                        optional {
+                            slug = it
+                            version = ver.min
+
+                        }
+                    }
+                }
+                else{
+                    src.modInfo.rinthSlug?.let {
+                        requires {
+                            slug = it
+                            version = ver.min
+                        }
+                    }
+                }
             }
         }
     }
 
     curseforge {
-        projectId = property("publish.curseforge").toString()
+        projectId = modPublish.curseforgeProjectToken
         // Get one here: https://legacy.curseforge.com/account/api-tokens
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
         minecraftVersions.addAll(modPublish.mcTargets)
-        requires {
-            if(!apis.architecturyApi.isEmpty) {
-                slug = "architectury-api"
-            }
-        }
-        if(env.isFabric){
-            requires{
-                slug="fabric-api"
+        apis.forEach{ src ->
+            if(src.enabled) src.versionRange.ifPresent{ ver ->
+                if(src.type.isOptional()){
+                    src.modInfo.curseSlug?.let {
+                        optional {
+                            slug = it
+                            version = ver.min
+
+                        }
+                    }
+                }
+                else{
+                    src.modInfo.curseSlug?.let {
+                        requires {
+                            slug = it
+                            version = ver.min
+                        }
+                    }
+                }
             }
         }
     }
@@ -661,7 +689,7 @@ publishing {
         // TODO this is an example of how I recommend you do this.
         if(modPublish.mavenURL.isPresent) {
             maven {
-                url = modPublish.mavenURL.get()
+                url = uri(modPublish.mavenURL.get())
                 credentials {
                     username = System.getenv("MVN_NAME")
                     password = System.getenv("MVN_KEY")
