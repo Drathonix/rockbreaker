@@ -471,6 +471,15 @@ group = property("group").toString()
 dependencies.forEachAfter{mid, ver ->
     stonecutter.dependency(mid,ver.min)
 }
+apis.forEach{ src ->
+    src.modInfo.modid?.let {
+        stonecutter.const(it,src.enabled)
+        src.versionRange.ifPresent{ ver ->
+            stonecutter.dependency(it,ver.min)
+        }
+    }
+}
+
 //TODO: Add more stonecutter consts here.
 stonecutter.const("fabric",env.isFabric)
 stonecutter.const("forge",env.isForge)
