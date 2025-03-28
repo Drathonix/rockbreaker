@@ -14,6 +14,8 @@ Expanding support is simple so don't worry if a version isn't listed.
 I'm assuming you are using Intellij and understand how to use [Stonecutter](https://stonecutter.kikugie.dev/stonecutter/introduction)
 
 # Project Setup
+Either "use this template" or follow the steps below.
+
 1. Create a new project, use the Java template, not the Minecraft template. You will be practically deleting everything the MC template generates.
    1. Set the project name to your modid. Keep it lowercase for your own sanity's sake.
    2. Ensure the build system is set to gradle and the Java version is 21.
