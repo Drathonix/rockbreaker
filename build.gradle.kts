@@ -321,17 +321,6 @@ val modPublish = ModPublish()
  */
 class ModDependencies {
     val loadBefore = listProperty("deps.before")
-    val loadAfterOptional = listProperty("deps.load_after_optional")
-    val loadAfterRequired = listProperty("deps.load_after_required")
-
-    private fun fre(list: List<String>, versionAcceptor: BiConsumer<String,VersionRange> ) {
-        for (i in 0 until list.size-3 step 3) {
-            val modid = list[i]
-            val min = list[i+1]
-            val max = list[i+2]
-            versionAcceptor.accept(modid,VersionRange(min,max))
-        }
-    }
     fun forEachAfter(cons: BiConsumer<String,VersionRange>){
         forEachRequired(cons)
         forEachOptional(cons)
@@ -342,7 +331,6 @@ class ModDependencies {
     }
 
     fun forEachOptional(cons: BiConsumer<String,VersionRange>){
-        fre(loadAfterOptional,cons)
         apis.forEach{src->
             if(src.enabled && src.type.isOptional() && src.type.includeInDepsList()) src.versionRange.ifPresent { ver -> src.modInfo.modid?.let {
                 cons.accept(it, ver)
@@ -351,7 +339,6 @@ class ModDependencies {
     }
 
     fun forEachRequired(cons: BiConsumer<String,VersionRange>){
-        fre(loadAfterRequired,cons)
         cons.accept("minecraft",env.mcVersion)
         if(env.isForge) {
             cons.accept("forge", env.forgeVersion)
@@ -484,7 +471,6 @@ apis.forEach{ src ->
 stonecutter.const("fabric",env.isFabric)
 stonecutter.const("forge",env.isForge)
 stonecutter.const("neoforge",env.isNeo)
-
 
 loom {
     silentMojangMappingsLicense()
