@@ -39,3 +39,6 @@ Do not sync gradle until told to. You will just waste time if you do.
 8. Once all the code is rid of Rock Breaker defaults set your active project to your preferred development version.
 
 Finally, replace this README.md with your own and begin developing!
+
+# Other Features
+//TODO
