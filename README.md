@@ -42,3 +42,5 @@ Finally, replace this README.md with your own and begin developing!
 
 # Other Features
 //TODO
+# Projects using Rockbreaker:
+[LoadMyChunks](https://github.com/Drathonix/LoadMyChunks) - includes ComputerCraft as a dependency, demonstrating how to add other mods and forgeRuntimeLibraries.
