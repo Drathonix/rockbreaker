@@ -558,8 +558,9 @@ abstract class ProcessResourcesExtension : ProcessResources() {
     )
     override fun copy() {
         super.copy()
+        val root = destinationDir.absolutePath
         autoPluralize.forEach { path ->
-            val file = File(destinationDir.absolutePath.plus(path))
+            val file = File(root.plus(path))
             if(file.exists()){
                 file.copyRecursively(File(file.absolutePath.plus("s")),true)
                 file.deleteRecursively()
