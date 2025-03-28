@@ -603,6 +603,7 @@ tasks.processResources {
     dynamics.excludes.forEach{file->
         exclude(file)
     }
+    filesMatching("pack.mcmeta") { expand(map) }
     filesMatching("fabric.mod.json") { expand(map) }
     filesMatching("META-INF/mods.toml") { expand(map) }
     filesMatching("META-INF/neoforge.mods.toml") { expand(map) }
