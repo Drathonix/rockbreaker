@@ -547,6 +547,7 @@ java {
  * Effectively renames datapack directories due to depluralization past 1.20.4.
  * TODO: acknowledge that you should not pluralize the directories listed in targets.
  */
+
 abstract class ProcessResourcesExtension : ProcessResources() {
     @get:Input
     val autoPluralize = arrayListOf(
@@ -568,12 +569,14 @@ abstract class ProcessResourcesExtension : ProcessResources() {
         }
     }
 }
+
 if(env.atMost("1.20.6")){
     tasks.replace("processResources",ProcessResourcesExtension::class)
 }
 
 tasks.processResources {
     val map = mapOf<String,String>(
+        "modid" to mod.id,
         "id" to mod.id,
         "name" to mod.displayName,
         "display_name" to mod.displayName,
