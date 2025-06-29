@@ -150,6 +150,9 @@ class Env {
     val fabricLoaderVersion = versionProperty("deps.core.fabric.loader.version_range")
     val forgeMavenVersion = versionProperty("deps.core.forge.version_range")
     val forgeVersion = VersionRange(extractForgeVer(forgeMavenVersion.min),extractForgeVer(forgeMavenVersion.max))
+    // FML language version is usually the first two numbers only.
+    private val fgl: String = if(isForge) forgeMavenVersion.min.substring(forgeMavenVersion.min.lastIndexOf("-")) else ""
+    val forgeLanguageVersion = VersionRange(if(isForge) fgl.substring(0,fgl.indexOf(".")) else "","")
     val neoforgeVersion = versionProperty("deps.core.neoforge.version_range")
     // The modloader system is separate from the API in Neo
     val neoforgeLoaderVersion = versionProperty("deps.core.neoforge.loader.version_range")
@@ -365,7 +368,7 @@ class SpecialMultiversionedConstants {
     private val mandatoryIndicator = if(env.isNeo) "required" else "mandatory"
     val mixinField = if(env.atMost("1.20.4") && env.isNeo) neoForgeMixinField() else if(env.isFabric) fabricMixinField() else ""
 
-    val forgelikeLoaderVer =  if(env.isForge) env.forgeVersion.asForgelike() else env.neoforgeLoaderVersion.asForgelike()
+    val forgelikeLoaderVer =  if(env.isForge) env.forgeLanguageVersion.asForgelike() else env.neoforgeLoaderVersion.asForgelike()
     val forgelikeAPIVer = if(env.isForge) env.forgeVersion.asForgelike() else env.neoforgeVersion.asForgelike()
     val dependenciesField = if(env.isFabric) fabricDependencyList() else forgelikeDependencyField()
     val excludes = excludes0()
