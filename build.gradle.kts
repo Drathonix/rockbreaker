@@ -7,7 +7,7 @@ import java.util.function.Predicate
 // TODO acknowledge that you add plugins here.
 plugins {
     `maven-publish`
-    kotlin("jvm") version "1.9.22"
+    kotlin("jvm") version "2.2.20-RC2"
     //id("fabric-loom") // Leaving this here if you want to swap loom.
     id("dev.architectury.loom")
     //id("dev.kikugie.j52j") // Recommended by kiku if using swaps in json5.
