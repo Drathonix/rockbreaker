@@ -459,21 +459,29 @@ group = property("group").toString()
 
 // Adds both optional and required dependencies to stonecutter version checking.
 dependencies.forEachAfter{mid, ver ->
-    stonecutter.dependency(mid,ver.min)
+    stonecutter {
+        dependencies[mid] = ver.min
+    }
 }
 apis.forEach{ src ->
     src.modInfo.modid?.let {
-        stonecutter.const(it,src.enabled)
+        stonecutter {
+            constants[it] = src.enabled
+        }
         src.versionRange.ifPresent{ ver ->
-            stonecutter.dependency(it,ver.min)
+            stonecutter {
+                dependencies[it] = ver.min
+            }
         }
     }
 }
 
 //TODO: Add more stonecutter consts here.
-stonecutter.const("fabric",env.isFabric)
-stonecutter.const("forge",env.isForge)
-stonecutter.const("neoforge",env.isNeo)
+stonecutter {
+    constants["fabric"] = env.isFabric
+    constants["forge"] = env.isForge
+    constants["neoforge"] = env.isNeo
+}
 
 loom {
     silentMojangMappingsLicense()
