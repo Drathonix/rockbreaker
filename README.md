@@ -1,8 +1,6 @@
 # Rock Breaker
 Rock Breaker is the development core of all Drathonix/Vicious mods. You are welcome to use it yourself.
 
-As of now, Rock Breaker runs on Stonecutter 4, [a Fork using Stonecutter 7 can be found here](https://github.com/Lianecx/rockbreaker-update/tree/main).
-
 Rock Breaker uses [Stonecutter](https://stonecutter.kikugie.dev/stonecutter/introduction) for multiversioning and Architectury Loom for multi-modloader support. Architectury API is not required but is enabled by default. Rock breaker by default provides support for:
 
 Fabric on 1.16.5, 1.18.2, 1.19.2, 1.19.4, 1.20.1, 1.20.4, 1.20.6, 1.21, 1.21.1, 1.21.2, 1.21.3.
@@ -16,6 +14,8 @@ Expanding support is simple so don't worry if a version isn't listed.
 I'm assuming you are using Intellij and understand how to use [Stonecutter](https://stonecutter.kikugie.dev/stonecutter/introduction)
 
 # Project Setup
+**As of now, Rock Breaker runs on Stonecutter 4, [a Fork using Stonecutter 7 can be found here](https://github.com/Lianecx/rockbreaker-update/tree/main).**
+
 Either "use this template" or follow the steps below.
 
 1. Create a new project, use the Java template, not the Minecraft template. You will be practically deleting everything the MC template generates.
