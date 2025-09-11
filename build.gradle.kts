@@ -145,7 +145,7 @@ class Env {
     val type = if(isFabric) EnvType.FABRIC else if(isForge) EnvType.FORGE else EnvType.NEOFORGE
 
     // TODO: if MC requires higher JVMs in future updates change this controller.
-    val javaVer = if(atMost("1.16.5")) 8 else if(atMost("1.20.4")) 17 else 21
+    val javaVer = if(atMost("1.16.5")) 8 else if(isExact("1.20.2")) 16 else if(atMost("1.20.4")) 17 else 21
 
     val fabricLoaderVersion = versionProperty("deps.core.fabric.loader.version_range")
     val forgeMavenVersion = versionProperty("deps.core.forge.version_range")
@@ -365,8 +365,8 @@ val dependencies = ModDependencies()
  * These values will change between versions and mod loaders. Handles generation of specific entries in mods.toml and neoforge.mods.toml
  */
 class SpecialMultiversionedConstants {
-    private val mandatoryIndicator = if(env.isNeo) "required" else "mandatory"
-    val mixinField = if(env.atLeast("1.20.4") && env.isNeo) neoForgeMixinField() else if(env.isFabric) fabricMixinField() else ""
+    private val mandatoryIndicator = if(env.isNeo && !env.atMost("1.20.2")) "required" else "mandatory"
+    val mixinField = if(env.isNeo) neoForgeMixinField() else if(env.isFabric) fabricMixinField() else ""
 
     val forgelikeLoaderVer =  if(env.isForge) env.forgeLanguageVersion.asForgelike() else env.neoforgeLoaderVersion.asForgelike()
     val forgelikeAPIVer = if(env.isForge) env.forgeVersion.asForgelike() else env.neoforgeVersion.asForgelike()
@@ -375,15 +375,15 @@ class SpecialMultiversionedConstants {
     private fun excludes0() : List<String> {
         val out = arrayListOf<String>()
         if(!env.isForge) {
-            // NeoForge before 1.21 still uses the forge mods.toml :/ One of those goofy changes between versions.
-            if(!env.isNeo || !env.atLeast("1.20.6")) {
+            // NeoForge before 1.20.5 still uses the forge mods.toml :/ One of those goofy changes between versions.
+            if(!env.isNeo || !env.atMost("1.20.4")){
                 out.add("META-INF/mods.toml")
             }
         }
         if(!env.isFabric){
             out.add("fabric.mod.json")
         }
-        if(!env.isNeo){
+        if(!env.isNeo || env.atMost("1.20.4")){
             out.add("META-INF/neoforge.mods.toml")
         }
         return out
@@ -539,8 +539,14 @@ dependencies {
 
 java {
     withSourcesJar()
-    //TODO update this is newer java is ever required.
-    val java = if(env.javaVer == 8) JavaVersion.VERSION_1_8 else if(env.javaVer == 17) JavaVersion.VERSION_17 else JavaVersion.VERSION_21
+    val java =
+        when (env.javaVersion) {
+            8 -> JavaVersion.VERSION_1_8
+            16 -> JavaVersion.VERSION_16
+            17 -> JavaVersion.VERSION_17
+            21 -> JavaVersion.VERSION_21
+            else -> throw Error("Unknown java version used")
+        }
     targetCompatibility = java
     sourceCompatibility = java
 }
