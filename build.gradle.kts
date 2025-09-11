@@ -145,7 +145,7 @@ class Env {
     val type = if(isFabric) EnvType.FABRIC else if(isForge) EnvType.FORGE else EnvType.NEOFORGE
 
     // TODO: if MC requires higher JVMs in future updates change this controller.
-    val javaVer = if(atMost("1.16.5")) 8 else if(isExact("1.20.2")) 16 else if(atMost("1.20.4")) 17 else 21
+    val javaVer = if(atMost("1.16.5")) 8 else if(isExact("1.17.1")) 16 else if(atMost("1.20.4")) 17 else 21
 
     val fabricLoaderVersion = versionProperty("deps.core.fabric.loader.version_range")
     val forgeMavenVersion = versionProperty("deps.core.forge.version_range")
@@ -226,10 +226,10 @@ class APISource(val type: DepType, val modInfo: APIModInfo, val mavenLocation: S
  */
 //TODO add any hardcoded apis here. Hardcoded APIs should be used in most if not all your versions.
 val apis = arrayListOf(
-    APISource(DepType.API, APIModInfo(if(env.atMost("1.16.5")) "fabric" else "fabric-api","fabric-api"), "net.fabricmc.fabric-api:fabric-api",optionalVersionProperty("deps.api.fabric")) { src ->
+    APISource(DepType.API, APIModInfo(if(env.atMost("1.17.1")) "fabric" else "fabric-api","fabric-api"), "net.fabricmc.fabric-api:fabric-api",optionalVersionProperty("deps.api.fabric")) { src ->
         src.versionRange.isPresent && env.isFabric
     },
-    APISource(DepType.API,APIModInfo("architectury","architectury-api"),"${if(env.atLeast("1.18.0")) "dev.architectury" else "me.shedaniel"}:architectury-${env.loader}",
+    APISource(DepType.API,APIModInfo("architectury","architectury-api"),"${if(env.atLeast("1.17.1")) "dev.architectury" else "me.shedaniel"}:architectury-${env.loader}",
         optionalVersionProperty("deps.api.architectury"))
     { src ->
         src.versionRange.isPresent
@@ -540,7 +540,7 @@ dependencies {
 java {
     withSourcesJar()
     val java =
-        when (env.javaVersion) {
+        when (env.javaVer) {
             8 -> JavaVersion.VERSION_1_8
             16 -> JavaVersion.VERSION_16
             17 -> JavaVersion.VERSION_17
