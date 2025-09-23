@@ -3,11 +3,11 @@ Rock Breaker is the development core of all Drathonix/Vicious mods. You are welc
 
 Rock Breaker uses [Stonecutter](https://stonecutter.kikugie.dev/stonecutter/introduction) for multiversioning and Architectury Loom for multi-modloader support. Architectury API is not required but is enabled by default. Rock breaker by default provides support for:
 
-Fabric on 1.16.5, 1.18.2, 1.19.2, 1.19.4, 1.20.1, 1.20.4, 1.20.6, 1.21, 1.21.1, 1.21.2, 1.21.3.
+Fabric on 1.16.5, 1.17.1, 1.18.2, 1.19.2, 1.19.4, 1.20.1, 1.20.2, 1.20.4, 1.20.6, 1.21, 1.21.1, 1.21.2, 1.21.3.
 
-Forge on 1.16.5, 1.18.2, 1.19.2, 1.19.4, 1.20.1, 1.20.4.
+Forge on 1.16.5, 1.17.1, 1.18.2, 1.19.2, 1.19.4, 1.20.1, 1.20.2, 1.20.4.
 
-Neoforge on 1.20.4, 1.20.6, 1.21, 1.21.1, 1.21.2, 1.21.3.
+Neoforge on 1.20.2, 1.20.4, 1.20.6, 1.21, 1.21.1, 1.21.2, 1.21.3.
 
 Expanding support is simple so don't worry if a version isn't listed.
 
