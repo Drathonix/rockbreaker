@@ -365,7 +365,7 @@ val dependencies = ModDependencies()
  * These values will change between versions and mod loaders. Handles generation of specific entries in mods.toml and neoforge.mods.toml
  */
 class SpecialMultiversionedConstants {
-    private val mandatoryIndicator = if(env.isNeo && !env.atMost("1.20.2")) "required" else "mandatory"
+    private val mandatoryIndicator = if(env.isNeo && !env.atMost("1.20.4")) "required" else "mandatory"
     val mixinField = if(env.isNeo) neoForgeMixinField() else if(env.isFabric) fabricMixinField() else ""
 
     val forgelikeLoaderVer =  if(env.isForge) env.forgeLanguageVersion.asForgelike() else env.neoforgeLoaderVersion.asForgelike()
