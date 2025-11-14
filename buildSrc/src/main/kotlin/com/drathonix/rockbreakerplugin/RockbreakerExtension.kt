@@ -7,6 +7,7 @@ import java.util.function.BiConsumer
 import java.util.function.Consumer
 
 import dev.kikugie.stonecutter.build.StonecutterBuildExtension
+import dev.kikugie.stonecutter.build.param.StonecutterBuildConfig
 
 open class RockbreakerExtension(val project: Project) {
     val stonecutter: StonecutterBuildExtension = project.extensions.getByType(StonecutterBuildExtension::class.java)
@@ -144,7 +145,21 @@ open class RockbreakerExtension(val project: Project) {
     }
 
     public val env = Env()
-    public val apis = ArrayList<APISource>()
+    private val apis = ArrayList<APISource>()
+
+    fun getAPIs(): Collection<APISource>{
+        return ArrayList(apis)
+    }
+
+    fun addAPI(src: APISource){
+        apis.add(src)
+        src.modInfo.modid?.let {
+            (stonecutter as StonecutterBuildConfig).constants[it] = src.enabled
+            src.versionRange.ifPresent{ ver ->
+                (stonecutter as StonecutterBuildConfig).dependencies[it] = ver.min
+            }
+        }
+    }
 
     // Stores information about the mod itself.
     public inner class ModProperties {
@@ -199,6 +214,7 @@ open class RockbreakerExtension(val project: Project) {
                 EnvType.FORGE -> if (enableForgeMixin) out.add(forgeMixin)
                 EnvType.NEOFORGE -> if (enableNeoforgeMixin) out.add(neoForgeMixin)
             }
+            out.addAll(extraMixins)
             return out
         }
     }
@@ -279,17 +295,16 @@ open class RockbreakerExtension(val project: Project) {
     public val modMixins = ModMixins()
 
     /**
-     * These values will change between versions and mod loaders. Handles generation of specific entries in mods.toml and neoforge.mods.toml
+     * These values will change between versions and mod loaders and may be changed by the project script. Handles generation of specific entries in mods.toml and neoforge.mods.toml
      */
-    public inner class SpecialMultiversionedConstants {
-        val mixinField = if (env.isNeo) neoForgeMixinField() else if (env.isFabric) fabricMixinField() else ""
+    public inner class Dynamics {
+        fun mixinField() = if (env.isNeo) neoForgeMixinField() else if (env.isFabric) fabricMixinField() else ""
 
-        val forgelikeLoaderVer =
+        fun forgelikeLoaderVer() =
             if (env.isForge) env.forgeLanguageVersion.asForgelike() else env.neoforgeLoaderVersion.asForgelike()
-        val forgelikeAPIVer = if (env.isForge) env.forgeVersion.asForgelike() else env.neoforgeVersion.asForgelike()
-        val dependenciesField = if (env.isFabric) fabricDependencyList() else forgelikeDependencyField()
-        val excludes = excludes0()
-        private fun excludes0(): List<String> {
+        fun forgelikeAPIVer() = if (env.isForge) env.forgeVersion.asForgelike() else env.neoforgeVersion.asForgelike()
+        fun dependenciesField() = if (env.isFabric) fabricDependencyList() else forgelikeDependencyField()
+        fun excludes(): List<String> {
             val out = arrayListOf<String>()
             if (!env.isForge) {
                 // NeoForge before 1.20.5 still uses the forge mods.toml :/ One of those goofy changes between versions.
@@ -371,5 +386,5 @@ open class RockbreakerExtension(val project: Project) {
     }
 
     public val modFabric = ModFabric()
-    public val dynamics = SpecialMultiversionedConstants()
+    public val dynamics = Dynamics()
 }

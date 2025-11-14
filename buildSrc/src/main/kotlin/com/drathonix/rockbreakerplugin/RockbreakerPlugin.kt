@@ -18,14 +18,7 @@ class RockbreakerPlugin : Plugin<Project> {
         rockbreaker.modDependencies.forEachAfter{mid, ver ->
             (stonecutter as StonecutterBuildConfig).dependencies[mid] = ver.min
         }
-        rockbreaker.apis.forEach{ src ->
-            src.modInfo.modid?.let {
-                (stonecutter as StonecutterBuildConfig).constants[it] = src.enabled
-                src.versionRange.ifPresent{ ver ->
-                    (stonecutter as StonecutterBuildConfig).dependencies[it] = ver.min
-                }
-            }
-        }
+
         (stonecutter as StonecutterBuildConfig).constants["fabric"]=rockbreaker.env.isFabric
         (stonecutter as StonecutterBuildConfig).constants["forge"]=rockbreaker.env.isForge
         (stonecutter as StonecutterBuildConfig).constants["neoforge"]=rockbreaker.env.isNeo
@@ -40,5 +33,4 @@ class RockbreakerPlugin : Plugin<Project> {
             }
         }
     }
-
 }

@@ -11,7 +11,7 @@ pluginManagement {
         maven("https://maven.kikugie.dev/releases")
     }
     plugins {
-        kotlin("jvm") version "1.9.24"
+        kotlin("jvm") version "2.1.10"
     }
 }
 
