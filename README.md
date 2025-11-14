@@ -1,5 +1,5 @@
 # Rock Breaker
-Rock Breaker is the development core of all Drathonix/Vicious mods. You are welcome to use it yourself.
+Rock Breaker is the development core of all Drathonix/Vicious mods. **You are welcome to use it yourself but I do not recommend using this template for simple projects, there are other templates that do enough while being easier to understand**
 
 Rock Breaker uses [Stonecutter](https://stonecutter.kikugie.dev/stonecutter/introduction) for multiversioning and Architectury Loom for multi-modloader support. Architectury API is not required but is enabled by default. Rock breaker by default provides support for:
 
@@ -42,7 +42,10 @@ Do not sync gradle until told to. You will just waste time if you do.
 
 Finally, replace this README.md with your own and begin developing!
 
-# Other Features
-//TODO
+# Custom Features
+1. Automated generation of META-INF/neoforge.mods.toml, META-INF/mods.toml, and fabric.mods.json based on gradle.properties and declared dependencies.
+2. Automatic renaming of datapack directories which mojang depluralized in modern versions, this way you only need one folder, do note that you must declare these targets in the depluralization task.
+3. Automatic declaration of dependencies with modmuss modPublish when publishing to curseforge and modrinth, assuming you've wrote the correct information of course.
+4. lots of bloat
 # Projects using Rockbreaker:
 [LoadMyChunks](https://github.com/Drathonix/LoadMyChunks) - includes ComputerCraft as a dependency, demonstrating how to add other mods and forgeRuntimeLibraries.
