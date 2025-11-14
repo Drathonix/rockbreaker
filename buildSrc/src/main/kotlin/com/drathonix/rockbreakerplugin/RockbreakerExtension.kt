@@ -120,7 +120,7 @@ open class RockbreakerExtension(val project: Project) {
 
         // FML language version is usually the first two numbers only.
         private val fgl: String =
-            if (isForge) forgeMavenVersion.min.substring(forgeMavenVersion.min.lastIndexOf("-")) else ""
+            if (isForge) forgeMavenVersion.min.substring(forgeMavenVersion.min.lastIndexOf("-")+1) else ""
         val forgeLanguageVersion = VersionRange(if (isForge) fgl.substring(0, fgl.indexOf(".")) else "", "")
         val neoforgeVersion = versionProperty("deps.core.neoforge.version_range")
 
