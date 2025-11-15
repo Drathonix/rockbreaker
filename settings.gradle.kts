@@ -54,7 +54,7 @@ stonecutter {
 }
 
 // TODO Replace this with your project name (Likely already done.)
-rootProject.name = "rockbreaker"
+rootProject.name = "templatemodid"
 
 
 
