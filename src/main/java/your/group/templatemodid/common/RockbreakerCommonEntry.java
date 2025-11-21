@@ -1,4 +1,4 @@
-package your.group.rockbreaker.common;
+package your.group.templatemodid.common;
 
 /**
  * //TODO RENAME ME!

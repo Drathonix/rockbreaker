@@ -1,8 +1,8 @@
 //? if fabric {
-package your.group.rockbreaker.fabric;
+package your.group.templatemodid.fabric;
 
 import net.fabricmc.api.ModInitializer;
-import your.group.rockbreaker.common.RockbreakerCommonEntry;
+import your.group.templatemodid.common.RockbreakerCommonEntry;
 
 public class FabricCommonEntry implements ModInitializer {
     @Override

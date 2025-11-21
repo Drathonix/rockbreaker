@@ -1,4 +1,4 @@
-package your.group.rockbreaker.client;
+package your.group.templatemodid.client;
 
 /**
  * //TODO RENAME ME!

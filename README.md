@@ -32,8 +32,8 @@ Do not sync gradle until told to. You will just waste time if you do.
 
 1. Copy all the files in this Repository into your project directory. Allow overwrites!
 2. In settings.gradle.kts disable any versions you don't want active to start. (I have all except 1.20.4 turned off for convenience) Enabling more versions will make script loading take longer.
-3. CTRL + SHIFT + R. Replace all instances of "rockbreaker" with your planned modid. Replace all instances of "Rock Breaker" with your mod display name.
-4. Rename the Mixin files from mixins.\<loader\>.rockbreaker.json to mixins.\<loader\>.\<your modid\>.json. Rename the source root from your.group.rockbreaker to <your group>.<your modid>
+3. CTRL + SHIFT + R. Replace all instances of "templatemodid" with your planned modid. Replace all instances of "Rock Breaker" with your mod display name.
+4. Rename the Mixin files from mixins.\<loader\>.templatemodid.json to mixins.\<loader\>.\<your modid\>.json. Rename the source root from your.group.templatemodid to <your group>.<your modid>
 6. CTRL + SHIFT + F. Search "TODO" Go through all the TODOs in gradle.properties, build.gradle.kts, stonecutter.gradle.kts, LICENSE, and settings.gradle.kts.
 6. Sync gradle! Wait. This may take longer depending on how many versions you have enabled.
 7. In the gradle menu, expand Tasks > stonecutter. Use the "Set active project to VERSION-MODLOADER" to swap between modloaders ONLY for now.
